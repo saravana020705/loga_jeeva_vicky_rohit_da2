@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Clone') {
+            steps {
+                echo 'Cloning code from Git...'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building project...'
+                bat 'echo "Build step executed"'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                bat 'echo "Tests passed"'
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline from Git succeeded!'
+        }
+    }
+}
