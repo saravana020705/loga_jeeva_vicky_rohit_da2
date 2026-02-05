@@ -19,7 +19,7 @@ pipeline {
                 echo 'Compiling code...'
                 bat '''
                     echo Simulating compilation...
-                    javac HelloWorld.java 2> compile.log
+                    javac HelloWorld.java
                     type compile.log
                 '''
             }
