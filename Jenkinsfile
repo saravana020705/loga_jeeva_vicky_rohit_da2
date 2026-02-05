@@ -1,35 +1,51 @@
 pipeline {
     agent any
     
+    triggers {
+        pollSCM('* * * * *')  // Poll Git every minute (for demo)
+        // Or use webhook: githubPush() if you set up webhook
+    }
+    
     stages {
-        stage('Clone') {
+        stage('Checkout') {
             steps {
-                echo 'Cloning code from Git...'
+                echo 'Checking out code from Git...'
+                checkout scm  // This clones your repo
             }
         }
-        stage('Build') {
+        
+        stage('Compile') {
             steps {
-                echo 'Building project...'
-                bat 'echo "Build step executed"'
+                echo 'Compiling code...'
+                bat '''
+                    echo Simulating compilation...
+                    javac HelloWorld.java 2> compile.log
+                    type compile.log
+                '''
+            }
+            post {
+                failure {
+                    echo '❌ Compilation failed!'
+                    error('Build failed due to compilation error')
+                }
             }
         }
-        stage('Test') {
+        
+        stage('Archive Artifacts') {
             steps {
-                echo 'Running tests...'
-                bat 'echo "Tests passed"'
+                echo 'Archiving build artifacts...'
+                bat 'echo Creating demo artifact... && echo "Build Success" > build-artifact.txt'
+                archiveArtifacts artifacts: 'build-artifact.txt', fingerprint: true
             }
         }
     }
     
     post {
         success {
-            echo '✅ PIPELINE SUCCESS: All stages completed successfully!'
+            echo '✅ CI Pipeline succeeded! Artifacts archived.'
         }
         failure {
-            echo '❌ PIPELINE FAILED: Check the logs for errors.'
-        }
-        always {
-            echo '📦 Pipeline execution completed.'
+            echo '❌ CI Pipeline failed! Check logs.'
         }
     }
 }
