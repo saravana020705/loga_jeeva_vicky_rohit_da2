@@ -2,39 +2,28 @@ pipeline {
     agent any
     
     triggers {
-        pollSCM('* * * * *')  // Poll Git every minute (for demo)
-        // Or use webhook: githubPush() if you set up webhook
+        pollSCM('* * * * *')
     }
     
     stages {
         stage('Checkout') {
             steps {
                 echo 'Checking out code from Git...'
-                checkout scm  // This clones your repo
+                checkout scm
             }
         }
         
         stage('Compile') {
             steps {
                 echo 'Compiling code...'
-                bat '''
-                    echo Simulating compilation...
-                    javac HelloWorld.java
-                    type compile.log
-                '''
-            }
-            post {
-                failure {
-                    echo '❌ Compilation failed!'
-                    error('Build failed due to compilation error')
-                }
+                bat 'javac HelloWorld.java'
             }
         }
         
         stage('Archive Artifacts') {
             steps {
                 echo 'Archiving build artifacts...'
-                bat 'echo Creating demo artifact... && echo "Build Success" > build-artifact.txt'
+                bat 'echo "Build Success" > build-artifact.txt'
                 archiveArtifacts artifacts: 'build-artifact.txt', fingerprint: true
             }
         }
